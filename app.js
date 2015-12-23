@@ -2,40 +2,40 @@
 let http = require('http');
 let port = 3000;
 let fs = require('fs');
-let routes ={
-  "/api/friends":"datas/friends.json",
-  "/api/amis":"datas/friends.json"
-}
-let serv = http.createServer((req, res) =>
+let express = require('express');
+let friendsRouter = require('./routes/friends-route');
+let app = express();
+
+
+
+app.use('/api/friends', friendsRouter);
+
+
+app.use((req, res) =>
+{
+  res.status(404);
+  var options = {
+    root: `${__dirname}/public/`,
+    dotfiles: 'deny',
+    headers:
+    {
+      'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  };
+
+  res.sendFile('404.html', options, (err) =>
   {
-
-    if (routes[req.url])
+    if (err)
     {
-      res.writeHead(200,
-      {
-        'Content-Type': 'text/json'
-      });
-      fs.readFile(routes[req.url], 'utf8', (err, data) =>
-      {
-        if (err) throw err;
-        res.end(data)
-      });
-
+      throw err;
+      res.status(err.status)
+        .end();
     }
-    else
-    {
-      res.writeHead(404,
-      {
-        'Content-Type': 'text/html'
-      });
-      fs.readFile('public/404.html', 'utf8', (err, data) =>
-      {
-        if (err) throw err;
-        res.end(data);
-      });
+  });
+});
 
-    }
-  })
+let serv = http.createServer(app)
   .listen(port, () =>
   {
     console.log(`server listening at port ${port}`);
