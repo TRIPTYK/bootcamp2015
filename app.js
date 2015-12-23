@@ -1,25 +1,22 @@
 "use strict";
+let fs = require('fs');
+fs.readFile('./fake.txt','utf8', function (err, data) {
+  if (err) throw err;
+  console.log(utils.compteMesLignes(data));
+});
 
-// let f= function(h,w){
-//   return h*w;
-// };
-// let d= function(h,w){
-//   return h/w;
-// }
-//
-// function calcul(fn) {
-//   return fn(4,5);
-// }
-// console.log(calcul(d));
+let utils = function(){
 
-// for (let i = 0; i < 5; i++) {
-//   console.log(i);
-// }
-// console.log("-------------")
-// for (let i =0; i < 8; i++) {
-//   console.log(i);
-// }
-{
-  let a =23;
-  console.log(a)
-}
+//API public
+  function countLines(data){
+    return data.split('\n').length + " " +compteCaracteres(data) ;
+  }
+  //API private
+  function compteCaracteres(data){
+    return data.length;
+  }
+
+  let that ={};
+  that.compteMesLignes = countLines;
+  return that;
+}();
