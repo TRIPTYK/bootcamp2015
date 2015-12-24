@@ -2,45 +2,22 @@
 "use strict";
 let fs = require('fs');
 let _ = require('lodash');
-let mongoose = require('mongoose');
+
 function friends()
 {
   let datas = null;
-  let dbURI = "mongodb://localhost/friends";
-  mongoose.connect(dbURI);
 
-  let friendSchema = mongoose.Schema({
-    name: {
-      type: String,
-      required: true
-    },
-    street:{
-      type: String,
-      required: true
-    },
-    number: {
-      type: Number,
-      required: true
-    },
-    zip: {
-      type: Number,
-      required: true
-    },
-    city: {
-      type: String,
-      required: true
-    },
-    country: {
-      type: String,
-      required: true
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  });
-  let friend = mongoose.model('Friend', friendSchema);
+  function loadData(cb)
+  {
+    fs.readFile('datas/friends.json', 'utf8', function(err, data)
+    {
+      if (err) throw err;
+      datas = JSON.parse(data);
+      if (cb) cb();
+    })
+  }
 
+  loadData();
 
   function getAllFriends()
   {
@@ -111,7 +88,15 @@ function friends()
     return datas.friends;
   }
 
-
+  function persistData()
+  {
+    var dataOut = JSON.stringify(datas);
+    fs.writeFile('datas/friends.json', dataOut, function(err)
+    {
+      if (err) throw err;
+      console.log("data well saved");
+    })
+  }
   var that = {};
   that.getAllFriends = getAllFriends;
   that.getFriendById = getFriendById;

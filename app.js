@@ -6,7 +6,10 @@ let express = require('express');
 let friendsRouter = require('./routes/friends-route');
 let app = express();
 
+let bodyParser = require('body-parser');
 
+//USER BODYPARSER FOR POST REQUESTS
+app.use(bodyParser.json());
 
 app.use('/api/friends', friendsRouter);
 
